@@ -21,7 +21,7 @@ There is always a need to clean and polish code. It isn't well commented and has
 
 ### To get started... (From the terminal)
 Clone project:
-* ```cd``` into the directory where you want it...
+* ```cd``` into the directory where you want to set up the server...
 * ```git clone https://github.com/TravisA9/Org.git```
 
 Set up Node and Express:
