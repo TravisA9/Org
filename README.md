@@ -15,4 +15,6 @@ Manage map based data for users and organizations
 
 * **map.js** Use GoogleMaps API to provide map functionality.
 
+In addition to these files you should have another folder, **node_modules**, which will appear when you set up NodeJS in your directory.
+
 There is always a need to clean and polish code. It isn't well commented and has changed a lot so may be a bit messy. It is always worth the time to clean up code. 
