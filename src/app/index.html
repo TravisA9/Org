@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Test</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/db.css">
+    <link href='https://maxcdn.icons8.com/fonts/line-awesome/css/line-awesome.min.css' rel='stylesheet'/>
+    <script src="mapdb.js" type="text/javascript"></script>
+    <script src="variables.js"></script>
+    <script src="map.js"></script>
+    <script src="local.js"></script>
+</head>
+<body>
+
+    <div id="login" style=" margin-top:100px; margin: 0 auto; width: 300px;">
+        <h3 class="login"  style="background:#a9cce3;">
+            <input type="text" placeholder="Username" id="name" value="Fred"><br>
+            <input type="text" placeholder="Password" id="password" value="abc123"><br>
+            <button type="button" onclick="login()">Login</button><br>
+        </h3>
+    </div>
+<div id="controls" style="display:none;">
+<form id="form" >
+
+    <!-- CALL TEMPLATE -->
+    <div style="overflow-y:scroll; position:absolute; left:0px; top:0px; max-height:100%;">
+    <div id="Call" style="padding:8px;" data-index="" data-MemberId="" data-Xcoord="" data-Ycoord="">
+        <!-- MemberId,FirstName,LastName,Progress,Xcoord,Ycoord,Col,Street,HouseNum,Notes -->
+        <div style="border-bottom: medium solid orange; margin:10px 0px 10px 0px; padding-bottom:5px;">
+            <!-- ID, Xcoord, Ycoord<br> -->
+            <!-- Publicador, Estudio, Revisita -->
+            <!-- Tenojnotsketl, Akin Tikmachtia, Akin Tikontlajpaloua -->
+            <div id="Progress" class="Publisher" onclick="toggleProgress()">Tenojnotsketl</div>
+            Tokayotl:<br> <input id="FirstName" type="text" value="Fulano"><br>
+            Apellidos:<br> <input id="LastName" type="text" name="lastname" value="De Tal"><br>
+
+        </div>
+        Territorio:<br>    <input id="Territorio" type="text" value="Rio Azul #2"><br>
+        Col:<br>    <input id="Col" type="text" value="Reforma"><br>
+        Calle:<br>    <input id="Street" type="text" value="Benito Juarez"><br>
+        Numero de casa:<br>    <input id="HouseNum" type="text" value="123"><br>
+        <textarea id="Notes" rows="4" placeholder="Okseki..."></textarea><br>
+        <button onclick="getCalls()" type="button">tikejyeuas</button>
+
+        <!-- <i class="la la-crosshairs"></i>
+        <i class="la la-cogs"></i>
+        <i class="la la-map"></i>
+        <i class="la la-object-ungroup"></i>
+        <i class="la la-thumb-tack"></i>
+        <i class="la la-trash"></i>
+        <i class="la la-map-marker"></i>
+        <i class="la la-user-plus"></i>
+        <i class="la la-unlock-alt"></i>
+        <i class="la la-upload"></i>
+        <i class="la la-times"></i> -->
+    </div>
+</div>
+<!-- PAGE SELECT CONTROLS -->
+<div class="med"  onclick="selectPage(event)" style="position:absolute; top:0px; height:45px; width:100%; background:#222; color:#b2babb;">
+    <i id="Other" class="la la-bullseye"></i>
+    <i id="Maps" class="Selected la la-map"></i>
+    <i id="Territories" class="la la-object-ungroup"></i>
+    <i id="Admin" class="la la-cogs"></i>
+</div>
+
+<!-- PUBLISHERS -->
+<!-- CONG -->
+<!-- CALL TABLE -->
+
+</form>
+<!-- MENU BUTTON -->
+<div class="med" style="position:absolute;left:0px; top:0px; color:black; z-index:30; width:45px; height:45px; background:#ccc;" onclick="toggleMenu()">
+    <i class="med la la-bars"></i>
+    <div id="result"></div>
+</div>
+
+<!-- MAP -->
+<div id="map" style="width:100%; height:100%;"></div>
+
+<!-- TABLES AND ADMINISTRATION -->
+<div id="AdminPage" style="width:100%; height:100%; display:none;">
+
+    <h1 style="text-align:center; padding:10px;">HTML Table</h1>
+
+    <table id="user">
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Email</th>
+        <th>Cong</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>Travis</td>
+        <td>SuperAdmin</td>
+        <td>travisashworth2007@gmail.com</td>
+        <td>Valle Esmeralda</td>
+        <td><i class="la la-trash" style="color:red; font-size:32px;"></i></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<i id="target" class="la la-crosshairs" style="font-size:64px;"></i>
+</div>
+
+
+</body>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6_eRHnOStcyri8GBqn6fFTta7i0I9_bo&callback=initMap">
+</script>
+
+</html>
