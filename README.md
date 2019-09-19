@@ -12,8 +12,11 @@ Set up Node and Express:
 * ```$ path-to/Org/src$ npm init```
 * ```$ npm install express```
 
+Install and set up MongoDB:
+* [https://hevodata.com/blog/install-mongodb-on-ubuntu/](https://hevodata.com/blog/install-mongodb-on-ubuntu/)
+* Create a database named `db`.
+* Create tow collections, one named `users` and a second one called `groups`
+
 Test:
-* ```path-to/Org/src$  node app/server.js``` 
+* ```path-to/Org/src$  node app/server.js```
 * Go to ```http://localhost:8080/``` in any web browser
-
-

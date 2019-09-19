@@ -1,4 +1,5 @@
-
+congregation = ""
+user = {}
 markers = [];
 menuState = "open"
 page = "map" // map, territories, admin
@@ -12,14 +13,11 @@ appState = { }
 //     cong:"Valle Esmeralda",
 // }
 // =============================================================================
-var date = new Date(); 
+var date = new Date();
 terr = [ { date:date, name:"Rio Azul #1", center:{ lat: 17.5077958, lng: -99.4710567 }, outline:[] } ]
 // =============================================================================
 cong = { name:"default", center:{ lat: 17.510247, lng: -99.475102 },
         territorys:[], currentTerritory:"", users:[user], persons:[] }
-
-
-
 // =============================================================================
 var cgn = JSON.parse(localStorage.getItem('cong'));
 var usr = JSON.parse(localStorage.getItem('user'));

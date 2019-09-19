@@ -1,6 +1,10 @@
 
-congregation = ""
-user = {}
+
+
+// var data = { user:user,
+// 		requests:[ {task:"signin",ret:"signin",db:"users",selector:{name:name},update:{}} ]}
+// var data = [ {task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} } ]
+
 // =============================================================================
 function login(){
     var name = document.getElementById("name").value
@@ -13,6 +17,11 @@ function login(){
     getAllUsers()
 }
 // =============================================================================
+function SelectCong(name){
+    var data = [{task:"find_one", ret:"ShowOrg", db:"group",  selector:{ name:name }, update:{} }]
+    fetchstuff(data)
+}
+// =============================================================================
 function CreatePerson(){
     var name = document.getElementById("cpname").value
     var email = document.getElementById("cpemail").value
@@ -22,7 +31,7 @@ function CreatePerson(){
 		var update   = { "\$push": { users:{ name:name, email:email }} }
 		var data = [{task:"add_user", user:user, ret:"none", db:"group",  selector:selector, update:update },
                     {task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} } ]
-		fetchstuff(JSON.stringify(data))
+		fetchstuff(data)
     SelectCong("Valle Esmeralda")
     // Now add user to Org
 }
@@ -32,14 +41,14 @@ function DeleteUser(name){
 	var data = [{task:"del_user", user:user, ret:"none", db:"group",  selector:{name:name}, update:update },
                 {task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} },
                 {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} }]
-	fetchstuff(JSON.stringify(data))
+	fetchstuff(data)
 }
 // =============================================================================
-function RemoveUser(name){ console.log("RemoveUser")
+function RemoveUser(name){
 	var selector = {name:congregation}
     var update = { "\$pull" : { users:{ name:name }}}
 	var data = [{task:"rm_user", user:user, ret:"none", db:"group",  selector:selector, update:update }]
-	fetchstuff(JSON.stringify(data))
+	fetchstuff(data)
 }
 // =============================================================================
 function logout(){
@@ -50,12 +59,12 @@ function logout(){
 // =============================================================================
 function getAllOrgs(){
     var data = [{task:"find", ret:"MakeDropdown", db:"group",  selector:{}, update:{} }]
-    fetchstuff(JSON.stringify(data))
+    fetchstuff(data)
 }
 // =============================================================================
 function getAllUsers(){
     var data = [{task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} }]
-    fetchstuff(JSON.stringify(data))
+    fetchstuff(data)
 }
 // =============================================================================
 function CreateTrtry(){
@@ -64,13 +73,13 @@ function CreateTrtry(){
     var data = [
         {task:"update_one", ret:"none", db:"group",  selector:{name:congregation}, update:{ "\$push": { territorys:teritory } }},
         {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} }]
-    fetchstuff(JSON.stringify(data))
+    fetchstuff(data)
 }
 // =============================================================================
 function DeleteTerr(name){
     var data = [{task:"update_one", ret:"none", db:"group",  selector:{name:congregation}, update:{ "\$pull" : { territorys:{ name:name }}}  },
                 {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} }]
-    fetchstuff(JSON.stringify(data))
+    fetchstuff(data)
 }
 // =============================================================================
 function DeletePerson(){
@@ -86,18 +95,14 @@ function CreateCong(){
     var data = [{task:"push", ret:"none", db:"group",  selector:{}, update:cong },
                 {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} },
                 {task:"find", ret:"MakeDropdown", db:"group",  selector:{}, update:{} }]
-    fetchstuff(JSON.stringify(data))
+    fetchstuff(data)
 }
-// =============================================================================
-function SelectCong(name){
-    var data = [{task:"find_one", ret:"ShowOrg", db:"group",  selector:{ name:name }, update:{} }]
-    fetchstuff(JSON.stringify(data))
-}
+
 // =============================================================================
 function deleteCong(name){
     var data = [{task:"delete_one", ret:"none", db:"group",  selector:{name:name}, update:{} },
     {task:"find", ret:"MakeDropdown", db:"group",  selector:{}, update:{} }]
-    fetchstuff(JSON.stringify(data))
+    fetchstuff(data)
 }
 // =============================================================================
 function printCong(data){
@@ -139,30 +144,36 @@ function insertlist(to, data) {
     document.getElementById(to).innerHTML = str
 }
 // =============================================================================
+function req(r){
+	return JSON.stringify({ user:user, requests:r });
+}
+// =============================================================================
 function fetchstuff(postData) {
-    console.log(postData)
- var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        data = JSON.parse(this.responseText) //
-				console.log("Response:");
-				console.log(data);
-        for (var i = 0; i < data.reply.length; i++) {
+ var http = new XMLHttpRequest();
+     http.overrideMimeType("application/json");
+     http.getResponseHeader('Content-Type')
+     http.open("POST", "db.json");
+     http.setRequestHeader('Content-type', 'application/json; charset=utf-8');
 
-            if(data.reply[i].function == "MakeDropdown"){
-                insertlist("dropdown", data.reply[i].results)
-            }else if(data.reply[i].function == "UsersDropdown"){
+  http.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        data = JSON.parse(this.responseText) 
+        for (var i = 0; i < data.length; i++) {
+
+            if(data[i].ret == "MakeDropdown"){
+                insertlist("dropdown", data[i].message)
+            }else if(data[i].ret == "UsersDropdown"){
                 var str = ""
-                res = data.reply[i].results
+                res = data[i].message
                 for (var j = 0; j < res.length; j++){
                     var name = res[j].name
                     str += "<a >" + name + "   <button type=\"button\" onclick=\"DeleteUser('" + name + "')\">Delete!</button></a>";
                 }
                 document.getElementById("Usersdropdown").innerHTML = str
-                // insertlist("Usersdropdown", data.reply[i].results)
-            }else if(data.reply[i].function == "ShowOrg"){
-                document.getElementById("postResponse").innerHTML = printCong(data.reply[i].results)
-            }else if(data.reply[i].function == "none"){
+                // insertlist("Usersdropdown", data[i].message)
+            }else if(data[i].ret == "ShowOrg"){//requests
+                document.getElementById("postResponse").innerHTML = printCong(data[i].message[0])
+            }else if(data[i].ret == "none"){
                 document.getElementById("postResponse").innerHTML = "No data found!"
             }
 
@@ -170,6 +181,6 @@ function fetchstuff(postData) {
         }
     }
   };
-  xhttp.open("POST", "db.json");
-  xhttp.send(postData);
+
+  http.send(req(postData));
 }

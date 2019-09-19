@@ -46,7 +46,7 @@ server.post("/db.json", (req, res) => {
     mongo.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
         if(err) { console.log(err); process.exit(0); }
         var dbo = db.db('db'); // 'db'  'codeforgeek'
-
+console.log(data)
         for (var i = 0; i < data.length; i++) {
             var node = data[i]
             var collection = dbo.collection(node.db); // 'users'
