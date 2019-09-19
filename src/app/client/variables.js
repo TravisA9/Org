@@ -5,13 +5,6 @@ menuState = "open"
 page = "map" // map, territories, admin
 appState = { }
 // =============================================================================
-// user = {
-//     name:"Travis",
-//     role:"SuperAdmin",
-//     id:"122345",
-//     email:"travisashworth2007@gmail.com",
-//     cong:"Valle Esmeralda",
-// }
 // =============================================================================
 var date = new Date();
 terr = [ { date:date, name:"Rio Azul #1", center:{ lat: 17.5077958, lng: -99.4710567 }, outline:[] } ]
@@ -30,7 +23,7 @@ if(cgn != null){
 
 
 
-// Then to retrieve it from the store and convert to an object again:
+// Then to retrieve it from storage and convert to an object again:
 // var cgn = JSON.parse(localStorage.getItem('user'));
 
 // If we need to delete all entries of the store we can simply do:

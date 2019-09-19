@@ -61,7 +61,6 @@ console.log(data)
                     if(err){ console.log(err); process.exit(0); }
                     db.close();
                     user.cong = result[0].cong;
-                    // user.email = result[0].email;
                     ret_results(result, node.ret, end)
                 });
                 break;
@@ -79,20 +78,25 @@ console.log(data)
                      ret_results(result, node.ret, end)
                  });
                  break;
-            case "find_many":
+            // case "find_many":
             case "update_one":
-            // collection.updateOne({name: 'Shahid'}, {'$set': {'name': 'Shahid Shaikh'}}, (err, results) => {
-            //     if(err) { console.log(err); process.exit(0); }
-            //     db.close();
-            //     ret_results(result, node.ret, end)
-            // });break;
+                collection.updateOne(node.selector, node.update, (err, result) => {
+                    if(err) { console.log(err); process.exit(0); }
+                    db.close();
+                    ret_results(result, node.ret, end)
+                }); break;
             case "delete_one":
-            // collection.deleteOne({name: 'Shahid'}, (err, results) => {
-            //     if(err) { console.log(err); process.exit(0); }
-            //     db.close();
-            //     ret_results(result, node.ret, end)
-            // });break;
-            case "push":
+                collection.deleteOne(node.selector, (err, result) => {
+                    if(err) { console.log(err); process.exit(0); }
+                    db.close();
+                    ret_results(result, node.ret, end)
+                }); break;
+            case "insert_One": //
+                collection.insertOne( node.update, (err, result) => {
+                if (err) { console.log(err); process.exit(0); }
+                db.close();
+                ret_results(result, node.ret, end)
+                }); break;
             case "add_user":
             case "del_user":
             case "rm_user":

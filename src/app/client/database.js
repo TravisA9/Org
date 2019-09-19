@@ -92,7 +92,7 @@ function CreateCong(){
     var cong = {  name:name, center:{"lat":17.510247, "lng":-99.475102},
                   currentTerritory: "", users:[], persons:[],
                   territorys:[], date:date }
-    var data = [{task:"push", ret:"none", db:"group",  selector:{}, update:cong },
+    var data = [{task:"insert_One", ret:"none", db:"group",  selector:{}, update:cong },
                 {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} },
                 {task:"find", ret:"MakeDropdown", db:"group",  selector:{}, update:{} }]
     fetchstuff(data)
@@ -157,7 +157,7 @@ function fetchstuff(postData) {
 
   http.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-        data = JSON.parse(this.responseText) 
+        data = JSON.parse(this.responseText)
         for (var i = 0; i < data.length; i++) {
 
             if(data[i].ret == "MakeDropdown"){
