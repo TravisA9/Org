@@ -42,6 +42,11 @@ server.post("/db.json", (req, res) => {
         }
     }
 
+    function get_results(err, result){
+         if(err){ console.log(err); process.exit(0); }
+         db.close();
+         ret_results(result, node.ret, end)
+     }
 
     mongo.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
         if(err) { console.log(err); process.exit(0); }
@@ -52,32 +57,30 @@ console.log(data)
             var collection = dbo.collection(node.db); // 'users'
             let end = (i == data.length-1)
 
-            // if(node.selector.cong == '_'){ node.selector.cong = user.cong; }
-
 
         switch (node.task) {
-            case "signin":
-                collection.find(node.selector).toArray((err, result) => {
-                    if(err){ console.log(err); process.exit(0); }
-                    db.close();
-                    user.cong = result[0].cong;
-                    ret_results(result, node.ret, end)
-                });
-                break;
+            // case "signin":
+            //     collection.find(node.selector).toArray((err, result) => {
+            //         if(err){ console.log(err); process.exit(0); }
+            //         db.close();
+            //         user.cong = result[0].cong;
+            //         ret_results(result, node.ret, end)
+            //     });
+            //     break;
             case "find":
-                collection.find(node.selector).toArray((err, result) => {
+            console.log(node.selector, node.update)
+                collection.find(node.selector).project(node.update).toArray((err, result) => {
                     if(err){ console.log(err); process.exit(0); }
                     db.close();
                     ret_results(result, node.ret, end)
                 });
                 break;
             case "find_one":
-                collection.find(node.selector).toArray((err, result) => {
+                collection.findOne(node.selector, node.update, (err, result) => {
                      if(err){ console.log(err); process.exit(0); }
                      db.close();
                      ret_results(result, node.ret, end)
-                 });
-                 break;
+                 }); break;
             // case "find_many":
             case "update_one":
                 collection.updateOne(node.selector, node.update, (err, result) => {
@@ -92,7 +95,7 @@ console.log(data)
                     ret_results(result, node.ret, end)
                 }); break;
             case "insert_One": //
-                collection.insertOne( node.update, (err, result) => {
+                collection.insertOne(node.update, (err, result) => {
                 if (err) { console.log(err); process.exit(0); }
                 db.close();
                 ret_results(result, node.ret, end)
@@ -106,7 +109,6 @@ console.log(data)
 
         }
 
-
     } //for loop
 
 }); // mongo.connect
@@ -116,3 +118,7 @@ server.listen(port, () => {
     console.log(`Server listening at ${port}`);
 });
 ////////////////////////////////////////////////////////////////////////////////
+// 102
+// petaquias
+// 2
+// grammer reading coprehention 12-2

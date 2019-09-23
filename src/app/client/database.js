@@ -6,6 +6,12 @@
 // var data = [ {task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} } ]
 
 // =============================================================================
+function updateView(data){ // delete_one
+    data.push({task:"find", ret:"UsersDropdown", db:"users", selector:{}, update:{name:1} })
+    data.push({task:"find_one", ret:"ShowOrg", db:"group", selector:{name:congregation}, update:{} })
+	return data;
+}
+// =============================================================================
 function login(){
     var name = document.getElementById("name").value
     var password = document.getElementById("password").value
@@ -26,29 +32,31 @@ function CreatePerson(){
     var name = document.getElementById("cpname").value
     var email = document.getElementById("cpemail").value
     var password = document.getElementById("cppassword").value
-		user = {name:name, password:password, email:email, cong:congregation}
-		var selector = { name:user.cong }
-		var update   = { "\$push": { users:{ name:name, email:email }} }
-		var data = [{task:"add_user", user:user, ret:"none", db:"group",  selector:selector, update:update },
-                    {task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} } ]
-		fetchstuff(data)
-    SelectCong("Valle Esmeralda")
+	var newuser = {name:name, password:password, email:email, cong:congregation}
+
+	var data = [ // Add user to organization:  , name: {$exists : false}
+            {task:"update_one", ret:"none", db:"group", selector:{name:congregation}, update:{ $push:{ users:{ name:name, email:email }}} },
+            {task:"insert_One", ret:"none", db:"users", selector:{}, update:newuser }]
+		fetchstuff(updateView(data))
     // Now add user to Org
 }
 // =============================================================================
-function DeleteUser(name){
-    var update = { "\$pull" : { users:{ name:name }}}
-	var data = [{task:"del_user", user:user, ret:"none", db:"group",  selector:{name:name}, update:update },
-                {task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} },
-                {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} }]
-	fetchstuff(data)
+function DeletePerson(){}
+// =============================================================================
+function DeleteUser(name){ // delete_one
+    var update = { $pull: { users:{ name:name }}}
+	var data = [{task:"delete_one", ret:"none", db:"users", selector:{name:name}, update:{} },
+                {task:"update_one", ret:"none", db:"group", selector:{name:congregation}, update:update }
+            ]
+	fetchstuff(updateView(data))
 }
 // =============================================================================
 function RemoveUser(name){
 	var selector = {name:congregation}
-    var update = { "\$pull" : { users:{ name:name }}}
-	var data = [{task:"rm_user", user:user, ret:"none", db:"group",  selector:selector, update:update }]
-	fetchstuff(data)
+    var update = { $pull : { users:{ name:name }}}
+	var data = [ // {task:"update_one", ret:"none", db:"group", selector:selector, update:update },
+        {task:"update_one", ret:"none", db:"group", selector:selector, update:update } ]
+	fetchstuff(updateView(data))
 }
 // =============================================================================
 function logout(){
@@ -63,7 +71,7 @@ function getAllOrgs(){
 }
 // =============================================================================
 function getAllUsers(){
-    var data = [{task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} }]
+    var data = [{task:"find", ret:"UsersDropdown", db:"users",  selector:{}, update:{} }] //_id:0,  password:0
     fetchstuff(data)
 }
 // =============================================================================
@@ -71,20 +79,17 @@ function CreateTrtry(){
     var name = document.getElementById("territory").value // var date = new Date();
     teritory = {name:name, center:{ lat: 17.5077958, lng: -99.4710567 }, outline:[] }
     var data = [
-        {task:"update_one", ret:"none", db:"group",  selector:{name:congregation}, update:{ "\$push": { territorys:teritory } }},
-        {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} }]
+        {task:"update_one", ret:"none", db:"group",  selector:{name:congregation}, update:{ $push: { territorys:teritory } }},
+        ,{task:"find_one", ret:"ShowOrg", db:"group", selector:{name:congregation}, update:{} }]
     fetchstuff(data)
 }
 // =============================================================================
 function DeleteTerr(name){
-    var data = [{task:"update_one", ret:"none", db:"group",  selector:{name:congregation}, update:{ "\$pull" : { territorys:{ name:name }}}  },
-                {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} }]
+    var data = [{task:"update_one", ret:"none", db:"group", selector:{name:congregation}, update:{ $pull : { territorys:{ name:name }}}  },
+                {task:"find_one", ret:"ShowOrg", db:"group", selector:{name:congregation}, update:{} }]
     fetchstuff(data)
 }
-// =============================================================================
-function DeletePerson(){
 
-}
 // =============================================================================
 function CreateCong(){
     var name = document.getElementById("Congregation").value
@@ -92,16 +97,16 @@ function CreateCong(){
     var cong = {  name:name, center:{"lat":17.510247, "lng":-99.475102},
                   currentTerritory: "", users:[], persons:[],
                   territorys:[], date:date }
-    var data = [{task:"insert_One", ret:"none", db:"group",  selector:{}, update:cong },
-                {task:"find_one", ret:"ShowOrg", db:"group",  selector:{name:congregation}, update:{} },
-                {task:"find", ret:"MakeDropdown", db:"group",  selector:{}, update:{} }]
+    var data = [{task:"insert_One", ret:"none", db:"group", selector:{}, update:cong },
+                {task:"find_one", ret:"ShowOrg", db:"group", selector:{name:congregation}, update:{} },
+                {task:"find", ret:"MakeDropdown", db:"group", selector:{}, update:{} }]
     fetchstuff(data)
 }
 
 // =============================================================================
 function deleteCong(name){
-    var data = [{task:"delete_one", ret:"none", db:"group",  selector:{name:name}, update:{} },
-    {task:"find", ret:"MakeDropdown", db:"group",  selector:{}, update:{} }]
+    var data = [{task:"delete_one", ret:"none", db:"group", selector:{name:name}, update:{} },
+    {task:"find", ret:"MakeDropdown", db:"group", selector:{}, update:{} }]
     fetchstuff(data)
 }
 // =============================================================================
@@ -163,6 +168,7 @@ function fetchstuff(postData) {
             if(data[i].ret == "MakeDropdown"){
                 insertlist("dropdown", data[i].message)
             }else if(data[i].ret == "UsersDropdown"){
+                console.log(data[i])
                 var str = ""
                 res = data[i].message
                 for (var j = 0; j < res.length; j++){
@@ -172,7 +178,7 @@ function fetchstuff(postData) {
                 document.getElementById("Usersdropdown").innerHTML = str
                 // insertlist("Usersdropdown", data[i].message)
             }else if(data[i].ret == "ShowOrg"){//requests
-                document.getElementById("postResponse").innerHTML = printCong(data[i].message[0])
+                document.getElementById("postResponse").innerHTML = printCong(data[i].message)
             }else if(data[i].ret == "none"){
                 document.getElementById("postResponse").innerHTML = "No data found!"
             }
