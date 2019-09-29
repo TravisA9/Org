@@ -5,6 +5,7 @@ const url = "mongodb://localhost:27017";
 
 
 var bodyParser = require('body-parser')
+// const bodyParser = require("raw-body");
 const express = require('express');
 const server = express();
 const port = 8080;
@@ -26,7 +27,7 @@ server.get('/', (req, res) => {
 });
 ////////////////////////////////////////////////////////////////////////////////
 server.post("/db.json", (req, res) => {
-    console.log("-----------------------------------");
+console.log("-----------------------------------");
     console.log(req.body);
     console.log("-----------------------------------");
     var user = {}
@@ -51,22 +52,19 @@ server.post("/db.json", (req, res) => {
     mongo.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
         if(err) { console.log(err); process.exit(0); }
         var dbo = db.db('db'); // 'db'  'codeforgeek'
-console.log(data)
+console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+console.log(JSON.stringify(data))
+console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         for (var i = 0; i < data.length; i++) {
+            console.log('item: ', i)
             var node = data[i]
+            console.log(node)
             var collection = dbo.collection(node.db); // 'users'
             let end = (i == data.length-1)
 
+            console.log("1");
 
         switch (node.task) {
-            // case "signin":
-            //     collection.find(node.selector).toArray((err, result) => {
-            //         if(err){ console.log(err); process.exit(0); }
-            //         db.close();
-            //         user.cong = result[0].cong;
-            //         ret_results(result, node.ret, end)
-            //     });
-            //     break;
             case "find":
             console.log(node.selector, node.update)
                 collection.find(node.selector).project(node.update).toArray((err, result) => {
@@ -97,7 +95,9 @@ console.log(data)
             case "insert_One": //
                 collection.insertOne(node.update, (err, result) => {
                 if (err) { console.log(err); process.exit(0); }
+                console.log("2");
                 db.close();
+                console.log("3");
                 ret_results(result, node.ret, end)
                 }); break;
             case "add_user":
@@ -122,3 +122,6 @@ server.listen(port, () => {
 // petaquias
 // 2
 // grammer reading coprehention 12-2
+
+// y6DF#4Ng
+// antonio.flores@oup.com

@@ -1,23 +1,22 @@
-congregation = ""
-user = {}
-fetchedCong = false
 // =============================================================================
 function login(){
     var name = document.getElementById("name").value
     var password = document.getElementById("password").value
     user = { name:name, password:password }
 
-    var data = { user:user,
-        requests:[ {task:"signin",ret:"signin",db:"users",selector:{name:name},update:{}} ]}
+    var data = [{task:"find_one", ret:"signin", db:"users",  selector:{ name:name }, update:{} }]
     fetchthis(data)
 
-    document.getElementById("login").style.display = "none";
-    document.getElementById("controls").style.display = "block";
+				document.getElementById("login").style.display = "none";
+				document.getElementById("controls").style.display = "block";
 }
 // =============================================================================
 function reconcileData(local, remote){
     if(local.name == "default"){ return remote; }
-
+}
+// =============================================================================
+function req(r){
+	return JSON.stringify({ user:user, requests:r });
 }
 // =============================================================================
 function fetchthis(postData) {
@@ -37,15 +36,20 @@ function fetchthis(postData) {
 
             if(data[i].ret== "getOrg"){
                 console.log(JSON.stringify(data[i].message))
-            }else if(data[i].ret == "getcong"){
-                // console.log(JSON.stringify())      cong = data[i].message[0]
-                    cong = reconcileData(cong, data[i].message[0])
+            }else if(data[i].ret == "getent"){
+                // console.log(JSON.stringify())      ent = data[i].message[0]
+                console.log(data[i].message)
+                    ent = data[i].message // reconcileData(ent, )
+                    entity = ent.name
+                    localStorage.setItem('ent', JSON.stringify(ent));
+														google.maps.event.trigger(map, 'resize');
+														reloadMarkers()
+														 makeMarkers(ent.persons);
             }else if(data[i].ret == "signin"){
-                let reply = data[i].message[0]
-                // user.cong = data[i].message.cong
+                let reply = data[i].message
+                // user.ent = data[i].message.ent
                 console.log(reply)
-                var dat = { user:reply,
-                    requests:[ {task:"find_one",ret:"getcong",db:"group",selector:{name:reply.cong},update:{}} ]}
+                var dat =  [{task:"find_one",ret:"getent",db:"group",selector:{name:reply.ent},update:{}}]
                     fetchthis(dat)
                 // user.email = data[i].message.email
             }else if(data[i].ret == "none"){
@@ -56,6 +60,6 @@ function fetchthis(postData) {
 
     }
   };
-
-  http.send(JSON.stringify(postData));
+  console.log(req(postData))
+  http.send(req(postData));
 }

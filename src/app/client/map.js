@@ -1,11 +1,11 @@
 // https://developers.google.com/maps/documentation/javascript/examples/drawing-tools
-// let res = cong.filter(student => student.subject == 'math' && student.score >= 70);
+// let res = ent.filter(student => student.subject == 'math' && student.score >= 70);
 var map;
 
 function initMap() {
-
+console.log("Map Loaded!")
         map = new google.maps.Map(document.getElementById('map'), {
-          center: cong.center,
+          center: ent.center,
           zoom: 19,
           mapTypeId: 'roadmap',
           mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
@@ -13,7 +13,6 @@ function initMap() {
         });
 
         google.maps.event.addListener(map, 'click', function(event){
-            // alert(event.latLng)
             ll = { lat: event.latLng.lat(), lng: event.latLng.lng() }
             markers.push(addPerson(ll, "blue", "No Name")); //placeMarker();
         });
@@ -27,27 +26,28 @@ function initMap() {
 
         // map.events.register("move", map, function() { });
 
-       makeMarkers(cong.persons);
+       makeMarkers(ent.persons);
 }
 // =============================================================================
 //
 // =============================================================================
 function addPerson(latLng, color, title){
     marker = addMarker(latLng, color, title)
+    id = ObjectId()
     person = {
         index:markers.length,
-        memberId:"",
+        _id:id,
         coords:latLng,
         progress:"RV",
-        firstName:"",
-        LastName:"",
+        name:"",
+        lastName:"",
         col:"",
         street:"",
         houseNum:"",
         notes:"",
         territorio:""
     }
-    cong.persons.push(person)
+    ent.persons.push(person)
 }
 // =============================================================================
 //
@@ -69,6 +69,7 @@ function addMarker(latLng, color, title){
 //
 // =============================================================================
 function SelectMarker(marker, event) {
+    console.log("select")
     var w = map.getDiv().offsetWidth/2;
     var h = map.getDiv().offsetHeight/2;
     var target = document.getElementById("target")
@@ -82,9 +83,9 @@ function SelectMarker(marker, event) {
 //
 // =============================================================================
 function populateForm(index){
-    var p = cong.persons[index]
+    var p = ent.persons[index]
     document.getElementById("Call").setAttribute("data-index", index);
-    id = p.memberId
+    id = p._id
     console.log(p.coords)
     lat = p.coords.lat  //()
     lng = p.coords.lng  //()
@@ -93,7 +94,7 @@ function populateForm(index){
     document.getElementById("Call").setAttribute("data-Ycoord", lng);
     document.getElementById("Progress").className = '';
     document.getElementById("Progress").setAttribute("class", p.progress);
-    document.getElementById("FirstName").value = p.firstName;
+    document.getElementById("FirstName").value = p.name;
     document.getElementById("LastName").value = p.lastName;
     document.getElementById("Col").value = p.col;
     document.getElementById("Street").value = p.street;
@@ -112,16 +113,24 @@ function makeMarkers(persons){
         }else if(persons[i].progress == "Publisher"){
             color = "yellow"
         }
-        console.log(persons[i].firstName)
-         markers.push(addMarker(persons[i].coords, color, persons[i].firstName));
+        console.log(persons[i].name)
+         markers.push(addMarker(persons[i].coords, color, persons[i].name));
     }
 }
+// =============================================================================
+//
+// =============================================================================
+function reloadMarkers(){
 
+    // Loop through markers and set map to null for each
+    for(var i=0; i<markers.length; i++){ markers[i].setMap(null); }
 
+    // Reset the markers array
+    markers = [];
 
-
-
-
+    // // Call set markers to re-add markers
+    // setMarkers(beaches);
+}
 
 
 
