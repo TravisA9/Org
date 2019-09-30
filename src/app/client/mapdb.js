@@ -2,6 +2,7 @@
 // Sift through entity data and determine what needs saved, then push commands to list and save
 // =============================================================================
 function SaveAll(){
+	if(!navigator.onLine){ return "Offline"; }
 	var p = ent.persons
 	var r = []
  console.log(entity)
@@ -27,7 +28,8 @@ function SaveAll(){
 
 	console.log("Saving... ", r)
 	fetchthis(r)
-	unsaved = false
+	unsaved = false // Data saved...
+	clearInterval(intervalId); // stop attempting to save now.
 }
 // =============================================================================
 // Mark data as unsaved, save to localStorage, attempt to push to server
@@ -35,7 +37,8 @@ function SaveAll(){
 function trySaveData(){
     unsaved = true
     localStorage.setItem('ent', JSON.stringify(ent));
-		SaveAll()
+		intervalId = setInterval( SaveAll, 3000); // Repetedly attempt to save...
+		// SaveAll()
 }
 // =============================================================================
 // Log in as user to get access to corresponding data
