@@ -105,16 +105,17 @@ function populateForm(index){
 // =============================================================================
 //
 // =============================================================================
-function makeMarkers(persons){
-    for (var i = 0; i < persons.length; i++) {
-        var color = "red"
-        if(persons[i].progress == "Study"){
-            color = "blue"
-        }else if(persons[i].progress == "Publisher"){
-            color = "yellow"
-        }
-        console.log(persons[i].name)
-         markers.push(addMarker(persons[i].coords, color, persons[i].name));
+function makeMarkers(p){
+    for (var i = 0; i < p.length; i++) {
+        if(!('task' in p[i]) || p[i].task != "delete_one"){
+            var color = "red"
+            if(p[i].progress == "Study"){
+                color = "blue"
+            }else if(p[i].progress == "Publisher"){
+                color = "yellow"
+            }
+             markers.push(addMarker(p[i].coords, color, p[i].name));
+         }
     }
 }
 // =============================================================================
@@ -124,12 +125,10 @@ function reloadMarkers(){
 
     // Loop through markers and set map to null for each
     for(var i=0; i<markers.length; i++){ markers[i].setMap(null); }
-
     // Reset the markers array
     markers = [];
-
-    // // Call set markers to re-add markers
-    // setMarkers(beaches);
+    // Call set markers to re-add markers
+    makeMarkers(ent.persons);
 }
 
 

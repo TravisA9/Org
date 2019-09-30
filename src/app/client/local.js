@@ -1,62 +1,30 @@
 // =============================================================================
-function req(r){
-	return JSON.stringify({ user:user, requests:r });
+// Find/Return an object in array by _id
+// =============================================================================
+function search(value, arr){
+    for(var i=0; i < arr.length; i++){
+        if(arr[i]._id === value){ return arr[i]; }
+    }
 }
 // =============================================================================
-// Intention: store/retrieve sesion, publisher, entity, territory data.
-// =============================================================================
-function getCooords(){
-    var datos = document.getElementById("Call")
-    var lat = datos.getAttribute("data-Xcoord")
-    var lng = datos.getAttribute("data-Ycoord")
-    return { lat:lat, lng:lng };
-}
+// Delete a person
 // =============================================================================
 function DeleteThis(){
 	var _id = datos.getAttribute("data-MemberId");
 	var p = ent.persons.filter(x => x._id == _id)[0]
 	p.task = "delete_one"
-    localStorage.setItem('ent', JSON.stringify(ent));
+    trySaveData()
 }
 // =============================================================================
-function SaveAll(){
-	var p = ent.persons
-	var r = []
- console.log(entity)
-	for (var i = 0; i < p.length; i++) {
-		let data = {}
-		if('task' in p[i]){
-			if(p[i].task == 'insert_One'){ delete p[i]['task'];
-			    var update = { $push:{ persons:p[i] }}
-				data = {task:"insert_One", ret:"none", db:"group", selector:{name:ent.name}, update:update}
-					r.push(data)
-			}else if(p[i].task == 'delete_one'){ delete p[i]['task'];
-				data = {task:"delete_one", ret:"none", db:"group", selector:{name:ent.name}, update:{ $pull:{ persons:{ _id:p[i]._id }}} }
-					r.push(data)
-			}else if(p[i].task == 'update_one'){ delete p[i]['task'];
-				console.log("Person: ", p[i])
-				data =  {task:"update_one", ret:"none", db:"group",
-				selector:{name:entity}, update:{ $push:{ persons:p[i] }} }
-					r.push(data)
-
- console.log(data)
-//
-// 				teritory = {name:'Dude!', center:{ lat: 17.5077958, lng: -99.4710567 }, outline:[], date:new Date() }
-// 				var data = [
-// 				    {task:"update_one", ret:"none", db:"group",  selector:{name:entity},
-// 					update:{ $push: { persons:teritory } }},
-// 				    {task:"find_one", ret:"none", db:"group", selector:{name:entity}, update:{} }]
-// 				fetchthis(data)
-
-
-			}
-		}
-		// r.push(data)
-	}
-
-
- console.log(r)
- fetchthis(r)
+// Delete person of _id:id
+// =============================================================================
+function DeletePerson(id){
+    if(confirm("Are you sure you want to delete this person?")){
+        var item = search(id, ent.persons) // alert(JSON.stringify(item))
+        item.task = "delete_one"
+        trySaveData()
+        reloadMarkers()
+    }
 }
 // =============================================================================
 // Get person data from html form.
@@ -69,11 +37,8 @@ function getCalls(){
         alert("Please select a pin to save!")
         return;
     }
-    // var lat = datos.getAttribute("data-Xcoord")
-    // var lng = datos.getAttribute("data-Ycoord")
     p.coords = { lat:lat, lng:lng }
     p._id = datos.getAttribute("data-MemberId");
-    // alert(p.MemberId)
     p.progress =   document.getElementById("Progress").getAttribute("class");
     p.name =  document.getElementById("FirstName").value;
     p.lastName =   document.getElementById("LastName").value;
@@ -83,32 +48,35 @@ function getCalls(){
     p.notes =      document.getElementById("Notes").value;
     p.territorio = document.getElementById("Territorio").value;
 	p.date =       new Date()
+
 	// Flag this for update on server!
-	p.task = "update_one"
+    var myid = search(p._id, ent.persons) // Determine if it already exists!
+    if(myid != undefined || 'task' in myid){
+    	p.task = "update_one"
+        myid = p
+    }else{
+        p.task = "insert_One"
+    }
 
-
-	// fetchstuff(updateView(data))
-    localStorage.setItem('ent', JSON.stringify(ent));
-    // localStorage.ent
-    // setItem('ent', ent);
+    trySaveData()
 }
 // =============================================================================
-// Update
+// dead code!
 // =============================================================================
-function updateLocal() {
-      if(typeof(Storage) !== "undefined"){
-            if(localStorage.clickcount){
-                localStorage.clickcount = Number(localStorage.clickcount)+1;
-            }else{
-                localStorage.clickcount = 1;
-            }
-            document.getElementById("number").value = localStorage.clickcount;
-      }else{
-          document.getElementById("number").value = 0;
-      }
-}
+// function updateLocal() {
+//       if(typeof(Storage) !== "undefined"){
+//             if(localStorage.clickcount){
+//                 localStorage.clickcount = Number(localStorage.clickcount)+1;
+//             }else{
+//                 localStorage.clickcount = 1;
+//             }
+//             document.getElementById("number").value = localStorage.clickcount;
+//       }else{
+//           document.getElementById("number").value = 0;
+//       }
+// }
 // =============================================================================
-//
+// Open/Close menu
 // =============================================================================
 function toggleMenu(){
     var el = document.getElementById("form")
@@ -119,10 +87,9 @@ function toggleMenu(){
         el.style.left = "0px";
         menuState = "open"
     }
-
 }
 // =============================================================================
-// map territories admin
+// Toggle between: map, persons, territories, admin
 // =============================================================================
 function selectPage(event){
     var el = document.getElementsByClassName("Selected")[0]
@@ -131,11 +98,33 @@ function selectPage(event){
     if(event.target.id == "Maps"){
         document.getElementById("map").setAttribute("style", "display:block;");
         document.getElementById("AdminPage").setAttribute("style", "display:none;");
+    }else if(event.target.id == "Territories"){
+			showpeople()
+			document.getElementById("map").setAttribute("style", "display:none;");
+			document.getElementById("AdminPage").setAttribute("style", "display:block;");
     }else{
         document.getElementById("map").setAttribute("style", "display:none;");
         document.getElementById("AdminPage").setAttribute("style", "display:block;");
     }
     event.preventDefault()
+}
+// =============================================================================
+// Display all people from entity as a table
+// =============================================================================
+function showpeople(){
+	var p = ent.persons
+	var str = '<tr><th>Nombre</th><th>Dir</th><th>Notes</th><th>Territorio</th><th>Last Updated</th></tr>'
+
+	for (var i = 0; i < p.length; i++){
+        if(!('task' in p[i]) || p[i].task != "delete_one"){
+    		str += "<tr><td>" + p[i].lastName + ", " + p[i].name + "<br>" + p[i].progress + "</td>"
+    		str += "<td>" + p[i].col + ", " + p[i].street + " " + p[i].houseNum + "</td>"
+    		str += "<td>" + p[i].notes + "</td>"
+    		str += "<td>" + p[i].territorio + "</td>"
+    		str += "<td>" + p[i].date + "<i class=\"la la-trash\" style=\"color:red; font-size:32px;\" onclick=\"DeletePerson('" + p[i]._id + "')\"></i></td></tr>"
+        }
+	}
+	document.getElementById("user").innerHTML = str // JSON.stringify(p)
 }
 // =============================================================================
 // Toggle between: Publisher, Study and ReturnVisit

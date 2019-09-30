@@ -4,6 +4,7 @@ markers = [];
 menuState = "open"
 page = "map" // map, territories, admin
 appState = { }
+unsaved = false
 // =============================================================================
 // =============================================================================
 const ObjectId = (m = Math, d = Date, h = 16, s = s => m.floor(s).toString(h)) =>
@@ -21,9 +22,8 @@ if(cgn != null){
     ent = cgn
     user = usr
 }else{
-    // alert("Aun no hay datos. Haga clic en el mapa para colocar una tachuela y entrar datos!");
+    alert("Aun no hay datos. Haga clic en el mapa para colocar una tachuela y entrar datos!");
 }
-
 
 
 // Then to retrieve it from storage and convert to an object again:
