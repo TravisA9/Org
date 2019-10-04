@@ -45,7 +45,8 @@ function addPerson(latLng, color, title){
         street:"",
         houseNum:"",
         notes:"",
-        territorio:""
+        territorio:"",
+        task:"uninitialized"
     }
     ent.persons.push(person)
 }
@@ -70,14 +71,16 @@ function addMarker(latLng, color, title){
 // =============================================================================
 function SelectMarker(marker, event) {
     console.log("select")
-    var w = map.getDiv().offsetWidth/2;
     var h = map.getDiv().offsetHeight/2;
+    var w = map.getDiv().offsetWidth/2;
+    console.log(h)
     var target = document.getElementById("target")
     target.style.left = String(event.pixel.x-32 + w) + "px";
     target.style.top =  String(event.pixel.y-32 + h) + "px";
+    // console.log(p)
     populateForm(marker.index)
     // map.setZoom(8);
-    // map.setCenter(marker.getPosition());
+    // map.setCenter(marker.getPosition()); Tonajli3 Oxford S259534274707
 }
 // =============================================================================
 //
@@ -122,7 +125,6 @@ function makeMarkers(p){
 //
 // =============================================================================
 function reloadMarkers(){
-
     // Loop through markers and set map to null for each
     for(var i=0; i<markers.length; i++){ markers[i].setMap(null); }
     // Reset the markers array

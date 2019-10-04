@@ -1,4 +1,10 @@
 // =============================================================================
+// Make date/time a bit more readable.
+// =============================================================================
+function formatted_date(dt) {
+	return dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes()
+}
+// =============================================================================
 // Find/Return an object in array by _id
 // =============================================================================
 function search(value, arr){
@@ -38,23 +44,24 @@ function getCalls(){
         return;
     }
     p.coords = { lat:lat, lng:lng }
-    p._id = datos.getAttribute("data-MemberId");
+    p._id =        datos.getAttribute("data-MemberId");
     p.progress =   document.getElementById("Progress").getAttribute("class");
-    p.name =  document.getElementById("FirstName").value;
+    p.name =       document.getElementById("FirstName").value;
     p.lastName =   document.getElementById("LastName").value;
     p.col =        document.getElementById("Col").value;
     p.street =     document.getElementById("Street").value;
     p.houseNum =   document.getElementById("HouseNum").value;
     p.notes =      document.getElementById("Notes").value;
     p.territorio = document.getElementById("Territorio").value;
-	p.date =       new Date()
+		p.date =       formatted_date(new Date())
 
 	// Flag this for update on server!
     var myid = search(p._id, ent.persons) // Determine if it already exists!
-    if(myid != undefined || 'task' in myid){
-    	p.task = "update_one"
-        myid = p
-    }else{
+    if(myid != undefined || 'task' in myid){ // uninitialized
+    	p.task = "delete_one"
+      myid.task = "update_one"
+			// There's probably a better way to do this...
+    }else if(p.task == 'uninitialized'){
         p.task = "insert_One"
     }
 
@@ -63,18 +70,13 @@ function getCalls(){
 // =============================================================================
 // dead code!
 // =============================================================================
-// function updateLocal() {
-//       if(typeof(Storage) !== "undefined"){
-//             if(localStorage.clickcount){
-//                 localStorage.clickcount = Number(localStorage.clickcount)+1;
-//             }else{
-//                 localStorage.clickcount = 1;
-//             }
-//             document.getElementById("number").value = localStorage.clickcount;
-//       }else{
-//           document.getElementById("number").value = 0;
-//       }
-// }
+function SelectEnt(name){
+    console.log(name)
+    ent.currentTerritory = name
+    ent.date = formatted_date(new Date())
+    areaChanged = true
+    trySaveData()
+}
 // =============================================================================
 // Open/Close menu
 // =============================================================================

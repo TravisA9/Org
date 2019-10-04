@@ -1,7 +1,3 @@
-// var org = {  name:name, center:{"lat":17.510247, "lng":-99.475102},
-//               currentTerritory: "", users:[], persons:[],
-//               territorys:[], date:date }
-
 // =============================================================================
 function updateView(data){ // delete_one
     data.push({task:"find", ret:"UsersDropdown", db:"users", selector:{}, update:{name:1} })
@@ -118,11 +114,11 @@ function printEnt(data){
     str += "<h4 style=\"text-align:center;\">Center: " + JSON.stringify(data.center) + "</h4>"
     str += "<h3 style=\"text-align:center;\">Current Area: " + data.currentTerritory + "</h3>"
 // RemoveUser DeleteUser
-        str += "<div style=\"display:inline-block; margin:10px; background:#d6eaf8; padding:8px; border:thin solid steelblue;\">New Area:<input type=\"text\" placeholder=\"Area Name\" id=\"territory\"><button type=\"button\" onclick=\"CreateTrtry()\">Add</button><br>" + getArray("DeleteTerr", data.territorys) + "</div>"
+        str += "<div style=\"display:inline-block; margin:10px; background:#e8daef; padding:8px; border:thin solid steelblue;\">New Area:<input type=\"text\" placeholder=\"Area Name\" id=\"territory\"><button type=\"button\" onclick=\"CreateTrtry()\">Add</button><br>" + getArray("DeleteTerr", data.territorys) + "</div>"
 
-        str += "<div style=\"display:inline-block; margin:10px; background:#fae5d3; padding:8px; border:thin solid steelblue;\"><input type=\"text\" placeholder=\"Username\" id=\"cpname\"><input type=\"text\" placeholder=\"email\" id=\"cpemail\"><input type=\"text\" placeholder=\"Password\" id=\"cppassword\"><button type=\"button\" onclick=\"CreatePerson()\">Add</button><br>" + getArray("RemoveUser", data.users) + "</div>"
+        str += "<div style=\"display:inline-block; margin:10px; background:#76d7c4; padding:8px; border:thin solid steelblue;\"><input type=\"text\" placeholder=\"Username\" id=\"cpname\"><input type=\"text\" placeholder=\"email\" id=\"cpemail\"><input type=\"text\" placeholder=\"Password\" id=\"cppassword\"><button type=\"button\" onclick=\"CreatePerson()\">Add</button><br>" + getArray("RemoveUser", data.users) + "</div>"
 console.log(data.persons)
-        str += "<div style=\"display:inline-block; margin:10px; background:#fcf3cf; padding:8px; border:thin solid steelblue;\">" + getArray("DeletePerson", data.persons) + "</div>"
+        str += "<div style=\"display:inline-block; margin:10px; background:#edbb99; padding:8px; border:thin solid steelblue;\">" + getArray("DeletePerson", data.persons) + "</div>"
 
     str += "</div>"
     return str

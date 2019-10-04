@@ -5,22 +5,34 @@ function SaveAll(){
 	if(!navigator.onLine){ return "Offline"; }
 	var p = ent.persons
 	var r = []
- console.log(entity)
+    var sel = {name:entity}
+
+	if(areaChanged){
+        data = {task:"update_one", ret:"none", db:"group", selector:sel, update:{ $set:{ currentTerritory:ent.currentTerritory}} }
+        r.push(data)
+	}
+
+
 	for (var i = 0; i < p.length; i++) {
 		let data = {}
 		if('task' in p[i]){
-            let sel = {name:entity}
+
+			// Create a new record.
 			if(p[i].task == 'insert_One'){ delete p[i]['task'];
 			    var update = { $push:{ persons:p[i] }}
 				data = {task:"insert_One", ret:"none", db:"group", selector:sel, update:update}
 				r.push(data)
+
+			// Completely remove record.
 			}else if(p[i].task == 'delete_one'){ delete p[i]['task'];
 				data = {task:"update_one", ret:"none", db:"group", selector:sel, update:{ $pull:{ persons:{ _id:p[i]._id }}} }
-                // var data = [{task:"update_one", ret:"none", db:"group", selector:{name:entity}, update:{ $pull: { persons:{ _id:id }}} }]
 				r.push(data)
+
+			// Change data in record: for now delete and create a new updated record.
 			}else if(p[i].task == 'update_one'){ delete p[i]['task'];
 				console.log("Person: ", p[i])
-				data =  {task:"update_one", ret:"none", db:"group", selector:sel, update:{ $push:{ persons:p[i] }} }
+				data =  {task:"update_one", ret:"none", db:"group", selector:sel,
+                update:{ $push:{ persons:p[i] }} }
 				r.push(data)
 			}
 		}
@@ -37,8 +49,7 @@ function SaveAll(){
 function trySaveData(){
     unsaved = true
     localStorage.setItem('ent', JSON.stringify(ent));
-		intervalId = setInterval( SaveAll, 3000); // Repetedly attempt to save...
-		// SaveAll()
+	intervalId = setInterval( SaveAll, 3000); // Repetedly attempt to save...
 }
 // =============================================================================
 // Log in as user to get access to corresponding data
@@ -51,8 +62,8 @@ function login(){
     var data = [{task:"find_one", ret:"signin", db:"users",  selector:{ name:name }, update:{} }]
     fetchthis(data)
 
-				document.getElementById("login").style.display = "none";
-				document.getElementById("controls").style.display = "block";
+	document.getElementById("login").style.display = "none";
+	document.getElementById("controls").style.display = "block";
 }
 // =============================================================================
 // Sugar: only used below
@@ -61,7 +72,9 @@ function req(r){
 	return JSON.stringify({ user:user, requests:r });
 }
 // =============================================================================
-function fetchthis(postData) {
+// Make request to server: as array of tasks to consolidate.
+// =============================================================================
+function fetchthis(postData){
  var http = new XMLHttpRequest();
      http.overrideMimeType("application/json");
      http.getResponseHeader('Content-Type')
@@ -84,8 +97,19 @@ function fetchthis(postData) {
                     ent = data[i].message
                     entity = ent.name
                     localStorage.setItem('ent', JSON.stringify(ent));
-														google.maps.event.trigger(map, 'resize');
-														reloadMarkers()
+										google.maps.event.trigger(map, 'resize');
+										reloadMarkers()
+										var str = ''
+
+										for (var i = 0; i < ent.territorys.length; i++){
+											var name = ent.territorys[i].name
+											str += "<a onclick=\"SelectEnt('" + name + "')\">" + name  + "</a>"
+										}
+										document.getElementById("Territorylist").innerHTML = str;
+										document.getElementById("selectedArea").innerHTML = ent.currentTerritory;
+
+														// <button class="dropbtn" id="selectedTer">Territories</button>
+														// <div class="dropdown-content" id="Territories"> </div>
             }else if(data[i].ret == "signin"){
                 let reply = data[i].message
                 // user.ent = data[i].message.ent
